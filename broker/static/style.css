@@ -1,0 +1,241 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ✅ LOGIN PAGE - Centered Layout */
+.login-body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #b9a42b, #2575fc);
+    color: white;
+}
+
+/* ✅ Login Box */
+.login-box {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    width: 350px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+/* ✅ Input Fields */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+    color: #333;
+}
+
+/* ✅ Buttons */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+button.login-btn {
+    background: #34db70;
+    color: white;
+}
+
+button.login-btn:hover {
+    background: #2aa85e;
+}
+
+button.register-btn {
+    background: #811e7f;
+    color: white;
+    margin-top: 10px;
+}
+
+button.register-btn:hover {
+    background: #8f0eca;
+}
+
+/* ✅ DASHBOARD PAGE - Left-Aligned Layout */
+.dashboard-body {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(135deg, #b9a42b, #2575fc);
+    color: white;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar h1 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.sidebar button:hover {
+    background: #cc0000;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Left Section - Add Service */
+.add-service, .remove-service {
+    width: 48%;
+}
+
+/* Form Styling */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Add Service Button */
+button.add-btn {
+    background: #34db70;
+    color: white;
+}
+
+button.add-btn:hover {
+    background: #2aa85e;
+}
+
+/* Remove Service Button */
+button.remove-btn {
+    background: #ffa500;
+    color: white;
+}
+
+button.remove-btn:hover {
+    background: #cc8400;
+}
+
+/* Message Box */
+#serviceMessage {
+    margin-top: 20px;
+    font-size: 16px;
+    color: yellow;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .add-service, .remove-service {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 400px) {
+    .login-box {
+        width: 90%;
+    }
+}
+
+
+/* Loader Styles */
+.loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    z-index: 1000;
+}
+
+/* Alert Styles */
+.alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+    z-index: 999;
+}
+
+.alert.success {
+    background-color: green;
+}
+
+.alert.error {
+    background-color: red;
+}
+
+/* "Add Another" Button */
+.add-another-btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.add-another-btn:hover {
+    background-color: #0056b3;
+}

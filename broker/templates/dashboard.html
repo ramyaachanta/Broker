@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Service Broker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h1>Service Broker</h1>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Add Service (Left) -->
+        <div class="add-service">
+            <h2>Add a Service</h2>
+            <div class="form-group">
+                <input type="text" id="service_name" placeholder="Service Name">
+                <input type="text" id="service_ip" placeholder="Service IP">
+                <input type="text" id="service_port" placeholder="Service Port">
+                <button class="add-btn" onclick="addService()">Add Service</button>
+            </div>
+        </div>
+
+        <!-- Remove Service (Right) -->
+        <div class="remove-service">
+            <h2>Remove a Service</h2>
+            <div class="form-group">
+                <input type="text" id="remove_service_name" placeholder="Service Name">
+                <button class="remove-btn" onclick="removeService()">Remove Service</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
