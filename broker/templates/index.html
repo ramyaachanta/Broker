@@ -6,17 +6,29 @@
     <title>Login | Service Broker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="login-body">
-    <img src="{{ url_for('static', filename='cartoon3.png') }}" alt="Peeking Cartoon" class="cartoon-image">
-    <div class="login-box">
+<body class="login-body"> 
 
-        <h1>Service Broker Login</h1>
-        <div id="message"></div>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button class="login-btn" onclick="login()">Login</button>
-        <button class="register-btn" onclick="register()">Register</button>
-    </div>
+    <!-- 🔵 NEW WRAPPER FOR SPLIT SCREEN LAYOUT -->
+    <div class="login-container"> <!-- 🔵 -->
+
+        <div class="left-panel"> <!-- 🔵 -->
+            <h1>Welcome back</h1>
+            <p>Please login to continue</p>
+            <div id="message"></div>
+
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+
+            <div class="btn-group">
+                <button class="login-btn" onclick="login()">Login</button>
+            </div>
+        </div>
+
+        <div class="right-panel"> 
+            <!-- <img src="{{ url_for('static', filename='CSimage.jpg') }}" alt="Login Illustration"> -->
+        </div>
+
+    </div> 
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

@@ -7,14 +7,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="dashboard-body">
-
+    <nav class="navbar">
+        <div class="navbar-title">Service Broker</div>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </nav>
     <!-- Sidebar -->
-    <div class="sidebar">
+     <!-- <div class="sidebar">
         <h1>Service Broker</h1>
         <button onclick="logout()">Logout</button>
-    </div>
+    </div>   -->
 
-    <!-- Main Content -->
+    <!-- Main Content --> 
     <div class="main-content">
         <!-- Add Service (Left) -->
         <div class="add-service">
@@ -40,3 +43,4 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
+

@@ -8,33 +8,80 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* ✅ LOGIN PAGE - Centered Layout */
 .login-body {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #b9a42b, #2575fc);
-    color: white;
+    background: #f8f8f8;
 }
 
-/* ✅ Login Box */
-.login-box {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    padding: 2rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    width: 350px;
+
+/* New Split Container */
+.login-container {
+    display: flex;
+    width: 150%;
+    max-width: cover;
+    height: 100%;
+    /* border-radius: 16px; */
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    background: rgb(255, 252, 252);
+}
+
+/* Left side with form */
+.left-panel {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.left-panel h1 {
+    color: #0c0c0c;
+    margin-bottom: 20px;
+}
+
+.left-panel p {
+    margin-bottom: 20px;
+    color: #676565;
+}
+
+.left-panel input {
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #060606;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 15px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.login-btn {
+    flex: 1;
+}
+
+/* Right side with image */
+.right-panel {
+    flex: 1;
+    background-image: url("../static/bg.jpg"); 
+    background-size: cover;        
+    background-position: center;  
+    background-repeat: no-repeat;
 }
 
 h1 {
-    font-size: 24px;
+    font-size: 42px;
     margin-bottom: 1rem;
 }
 
-/* ✅ Input Fields */
+/* Input Fields */
 input {
     width: 100%;
     padding: 12px;
@@ -47,118 +94,110 @@ input {
     color: #333;
 }
 
-/* ✅ Buttons */
+/* Buttons */
 button {
     width: 100%;
     padding: 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 button.login-btn {
-    background: #34db70;
+    background: #085f9d;
     color: white;
 }
 
 button.login-btn:hover {
-    background: #2aa85e;
+    background: #034fac;
 }
 
 button.register-btn {
-    background: #811e7f;
+    background: #82ddef;
     color: white;
-    margin-top: 10px;
+    /* margin-top: 20px; */
 }
 
 button.register-btn:hover {
-    background: #8f0eca;
+    background: #40caf5;
 }
 
-/* ✅ DASHBOARD PAGE - Left-Aligned Layout */
+/*  DASHBOARD PAGE - Left-Aligned Layout */
 .dashboard-body {
-    display: flex;
+    margin: 0;
+    padding: 0;
     height: 100vh;
-    background: linear-gradient(135deg, #b9a42b, #2575fc);
-    color: white;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 250px;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    padding: 20px;
+    background: linear-gradient(135deg, #f0f0f0,  #ffffff);
+    font-family: 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.2);
-}
-
-.sidebar h1 {
-    font-size: 22px;
-    margin-bottom: 20px;
-}
-
-.sidebar button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    background: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-}
-
-.sidebar button:hover {
-    background: #cc0000;
 }
 
 /* Main Content */
 .main-content {
     flex: 1;
-    padding: 40px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+    gap: 90px;
+    padding: 40px;
 }
 
 /* Left Section - Add Service */
 .add-service, .remove-service {
-    width: 48%;
+    background: rgba(0, 0, 0, 0.08);     
+    padding: 30px;
+    border-radius: 12px;
+    width: 600px;
+    backdrop-filter: blur(6px);
+    color: black;
+    border: 2px solid rgba(0, 0, 0, 0.3);
 }
 
 /* Form Styling */
 .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    width: 100%;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    border: none;
+    background: #cdc8c8;
+    font-size: 14px;
 }
 
 /* Add Service Button */
 button.add-btn {
-    background: #34db70;
+    background: #2c85f3;
+    padding: 12px;
+    width: 100%;
     color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 button.add-btn:hover {
-    background: #2aa85e;
+    background: #052889;
 }
 
 /* Remove Service Button */
 button.remove-btn {
-    background: #ffa500;
+    background: #2c85f3;
+    padding: 12px;
+    width: 100%;
     color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 button.remove-btn:hover {
-    background: #cc8400;
+    background: #052889;
 }
 
 /* Message Box */
@@ -178,12 +217,13 @@ button.remove-btn:hover {
     .add-service, .remove-service {
         width: 100%;
         margin-bottom: 20px;
+        text-align: center;
     }
 }
 
 @media (max-width: 400px) {
     .login-box {
-        width: 90%;
+        width: 10%;
     }
 }
 
@@ -206,15 +246,17 @@ button.remove-btn:hover {
 /* Alert Styles */
 .alert {
     position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 14px;
+    top: 92%;                     
+    left: 50%;                     
+    transform: translate(-50%, -50%);  
+    padding: 15px 30px;
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
     font-weight: bold;
-    z-index: 999;
+    border-radius: 8px;
+    font-size: 16px;
+    z-index: 9999;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .alert.success {
@@ -224,6 +266,7 @@ button.remove-btn:hover {
 .alert.error {
     background-color: red;
 }
+
 
 /* "Add Another" Button */
 .add-another-btn {
@@ -238,4 +281,45 @@ button.remove-btn:hover {
 
 .add-another-btn:hover {
     background-color: #0056b3;
+}
+
+.navbar {
+    width: 100%;
+    background: linear-gradient(135deg, #085f9d,  #34b8fa);
+    padding: 30px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.navbar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
+    font-weight: bold;
+    color: #fcf9f9;
+}
+
+.logout-btn {
+    position: absolute;
+    left :90%;
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 7px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    min-width: 100px;         
+    max-width: 140px;         
+    width: auto;             
+    white-space: nowrap;
+}
+
+.logout-btn:hover {
+    background: #cc0000;
 }
