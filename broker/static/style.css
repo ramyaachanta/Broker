@@ -67,6 +67,19 @@
     flex: 1;
 }
 
+.register-btn {
+    flex: 1;
+    background: #e5533d;  /* red/orange */
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+}
+
 /* Right side with image */
 .right-panel {
     flex: 1;
@@ -119,6 +132,10 @@ button.register-btn {
     background: #82ddef;
     color: white;
     /* margin-top: 20px; */
+}
+
+button.register-btn:hover {
+    background: #d13f27;
 }
 
 button.register-btn:hover {
@@ -322,4 +339,31 @@ button.remove-btn:hover {
 
 .logout-btn:hover {
     background: #cc0000;
+}
+
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    width: 400px;
+    text-align: center;
+}
+
+.modal-content input {
+    width: 90%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
 }

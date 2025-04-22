@@ -1,6 +1,12 @@
+import random
+import re
+otp_store = {}
+import smtplib
+from email.mime.text import MIMEText
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 from urllib.parse import quote_plus
@@ -26,13 +32,50 @@ class Service(db.Model):
         self.name = name
         self.ip = ip
         self.port = port
+    
+import smtplib
+from email.mime.text import MIMEText
 
-with app.app_context():
-    db.create_all()
+def send_otp_email(recipient_email, otp):
+    # ✅ This is the broker's Gmail (used to send OTP to providers)
+    sender_email = "bhagyaputturu2000@gmail.com"           # Replace with your broker Gmail
+    app_password = "kgty rnzp fniw kgyc"           # Replace with your Gmail App Password
+
+    subject = "Your OTP Code - Service Broker"
+    body = f"""
+    Hello,
+
+    Your One-Time Password (OTP) is: {otp}
+
+    Please enter this OTP to verify your identity and continue with your request.
+    This OTP is valid for a single use and should not be shared with anyone.
+
+    Regards,  
+    Service Broker Team
+    """
+
+    # Create the email message
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = sender_email
+    msg["To"] = recipient_email
+
+    try:
+        # Setup SMTP connection and send the email
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, app_password)
+        server.sendmail(sender_email, recipient_email, msg.as_string())
+        server.quit()
+
+        print(f"✅ OTP email sent to {recipient_email}")
+    except Exception as e:
+        print(f"❌ Failed to send OTP email to {recipient_email}:", e)
+
 
 # --------- DUMMY LOGIN ---------
-DUMMY_USERNAME = "admin"
-DUMMY_PASSWORD = "password123"
+# DUMMY_USERNAME = "admin"
+# DUMMY_PASSWORD = "password123"
 
 # --------- ROUTES ---------
 
@@ -46,10 +89,37 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    if username == DUMMY_USERNAME and password == DUMMY_PASSWORD:
+    user = ProviderUser.query.filter_by(username=username).first()
+    if user and user.check_password(password):
         session["user"] = username
         return jsonify({"success": True, "message": "Login Successful"})
-    return jsonify({"success": False, "message": "Invalid credentials"})
+
+    return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+def is_valid_email(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({"success": False, "message": "Username and password required"}), 400
+    
+    if not is_valid_email(username):
+        return jsonify({"success": False, "message": "Invalid email address"}), 400
+
+    if ProviderUser.query.filter_by(username=username).first():
+        return jsonify({"success": False, "message": "Username already exists"}), 409
+
+    new_user = ProviderUser(username=username)
+    new_user.set_password(password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Registration successful"})
 
 @app.route("/dashboard")
 def dashboard():
@@ -68,6 +138,18 @@ def add_service():
     service_name = data.get("service_name")
     service_ip = data.get("service_ip")
     service_port = data.get("service_port")
+    username = data.get("username")
+    password = data.get("password")
+    otp = data.get("otp")
+
+    provider = ProviderUser.query.filter_by(username=username).first()
+    if not provider or not provider.check_password(password):
+        return jsonify({"success": False, "message": "Invalid provider credentials"}), 401
+
+    expected_otp = otp_store.get(username)
+    if otp != expected_otp:
+        return jsonify({"success": False, "message": "Invalid or missing OTP"}), 401
+    del otp_store[username] 
 
     existing_service = Service.query.filter_by(name=service_name).first()
     if existing_service:
@@ -113,6 +195,18 @@ def remove_service():
 
     data = request.json
     service_name = data.get("service_name")
+    username = data.get("username")
+    password = data.get("password")
+    otp = data.get("otp") 
+
+    provider = ProviderUser.query.filter_by(username=username).first()
+    if not provider or not provider.check_password(password):
+        return jsonify({"success": False, "message": "Invalid provider credentials"}), 401
+    
+    expected_otp = otp_store.get(username)
+    if otp != expected_otp:
+        return jsonify({"success": False, "message": "Invalid or missing OTP"}), 401
+    del otp_store[username]
 
     service = Service.query.filter_by(name=service_name).first()
     if not service:
@@ -123,10 +217,43 @@ def remove_service():
 
     return jsonify({"success": True, "message": f"Service '{service_name}' removed successfully!"})
 
+@app.route("/request_otp", methods=["POST"])
+def request_otp():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+
+    provider = ProviderUser.query.filter_by(username=username).first()
+    if not provider or not provider.check_password(password):
+        return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+    otp = str(random.randint(100000, 999999))
+    otp_store[username] = otp
+
+    send_otp_email(username, otp)
+    return jsonify({"success": True, "message": "OTP sent successfully"})
+
+
+class ProviderUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
 @app.route("/logout")
 def logout():
     session.pop("user", None)
     return redirect(url_for("home"))
+
+# Just run this twwo lines firsst time to create table in DB and comment later
+# with app.app_context():
+#     db.create_all()
 
 if __name__ == "__main__":
     app.run(debug=True)
