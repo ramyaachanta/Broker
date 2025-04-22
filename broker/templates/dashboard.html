@@ -26,7 +26,7 @@
                 <input type="text" id="service_name" placeholder="Service Name">
                 <input type="text" id="service_ip" placeholder="Service IP">
                 <input type="text" id="service_port" placeholder="Service Port">
-                <button class="add-btn" onclick="addService()">Add Service</button>
+                <button class="add-btn" onclick="showVerificationModal('add')">Add Service</button>
             </div>
         </div>
 
@@ -35,10 +35,29 @@
             <h2>Remove a Service</h2>
             <div class="form-group">
                 <input type="text" id="remove_service_name" placeholder="Service Name">
-                <button class="remove-btn" onclick="removeService()">Remove Service</button>
+                <button class="remove-btn" onclick="showVerificationModal('remove')">Remove Service</button>
             </div>
         </div>
     </div>
+
+    <div id="authModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <h3>Verify Credentials</h3>
+          <input type="email" id="verify_username" placeholder="Email" required autocomplete="off">
+          <input type="password" id="verify_password" placeholder="Password" >
+          <input type="text" id="verify_otp" placeholder="Enter OTP" autocomplete="off" style="display: none; width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; font-size: 16px;">
+
+          <p id="otp-timer" style="color: red; display: none;">OTP expires in: <span id="otp-countdown">02:00</span></p>
+
+          <div class="btn-group">
+            <button id="verifyBtn" onclick="confirmVerification()">Confirm</button>
+            <button onclick="closeModal()">Cancel</button>
+            <button id="resendBtn" onclick="resendOTP()" style="display: none;">Resend OTP</button> 
+
+          </div>
+        </div>
+      </div>
+      
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
