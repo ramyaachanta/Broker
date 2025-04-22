@@ -16,7 +16,7 @@ CORS(app)
 app.secret_key = "supersecretkey"
 
 
-password = quote_plus("Nithya@123")  # Encode special characters
+password = quote_plus("Cse@40668")  # Encode special characters
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://postgres:{password}@localhost:5432/broker_db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -73,11 +73,7 @@ def send_otp_email(recipient_email, otp):
         print(f"❌ Failed to send OTP email to {recipient_email}:", e)
 
 
-# --------- DUMMY LOGIN ---------
-# DUMMY_USERNAME = "admin"
-# DUMMY_PASSWORD = "password123"
 
-# --------- ROUTES ---------
 
 @app.route("/")
 def home():
@@ -121,24 +117,33 @@ def register():
 
     return jsonify({"success": True, "message": "Registration successful"})
 
+@app.route("/get_current_user")
+def get_current_user():
+    if "user" in session:
+        return jsonify({"logged_in": True, "username": session["user"]})
+    return jsonify({"logged_in": False})
+
+
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect(url_for("home"))
 
     services = Service.query.all()
-    return render_template("dashboard.html", services=services)
+    return render_template("dashboard.html", services=services, username=session["user"])
+
 
 @app.route("/add_service", methods=["POST"])
 def add_service():
-    # if "user" not in session:
-    #     return jsonify({"success": False, "message": "Unauthorized"})
+    if "user" not in session:
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
 
+    username = session["user"]  # 🧠 Get logged-in user automatically
     data = request.json
+
     service_name = data.get("service_name")
     service_ip = data.get("service_ip")
     service_port = data.get("service_port")
-    username = data.get("username")
     password = data.get("password")
     otp = data.get("otp")
 
@@ -149,7 +154,7 @@ def add_service():
     expected_otp = otp_store.get(username)
     if otp != expected_otp:
         return jsonify({"success": False, "message": "Invalid or missing OTP"}), 401
-    del otp_store[username] 
+    del otp_store[username]
 
     existing_service = Service.query.filter_by(name=service_name).first()
     if existing_service:
@@ -191,18 +196,19 @@ def get_services():
 @app.route("/remove_service", methods=["POST"])
 def remove_service():
     if "user" not in session:
-        return jsonify({"success": False, "message": "Unauthorized"})
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
 
+    username = session["user"]
     data = request.json
+
     service_name = data.get("service_name")
-    username = data.get("username")
     password = data.get("password")
-    otp = data.get("otp") 
+    otp = data.get("otp")
 
     provider = ProviderUser.query.filter_by(username=username).first()
     if not provider or not provider.check_password(password):
         return jsonify({"success": False, "message": "Invalid provider credentials"}), 401
-    
+
     expected_otp = otp_store.get(username)
     if otp != expected_otp:
         return jsonify({"success": False, "message": "Invalid or missing OTP"}), 401
@@ -216,6 +222,7 @@ def remove_service():
     db.session.commit()
 
     return jsonify({"success": True, "message": f"Service '{service_name}' removed successfully!"})
+
 
 @app.route("/request_otp", methods=["POST"])
 def request_otp():
@@ -252,8 +259,8 @@ def logout():
     return redirect(url_for("home"))
 
 # Just run this twwo lines firsst time to create table in DB and comment later
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 if __name__ == "__main__":
     app.run(debug=True)

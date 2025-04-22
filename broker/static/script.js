@@ -2,9 +2,27 @@ let pendingAction = null; // To store whether user clicked "add" or "remove"
 let otpSent = false;
 let countdownInterval = null;
 let otpExpiryTime = null;
+let sessionUser = ""; // Holds the email from backend
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Utility function to show a loader
+    const path = window.location.pathname;
+
+    if (path === "/dashboard") {
+        fetch("/get_current_user")
+            .then(res => res.json())
+            .then(data => {
+                if (data.logged_in) {
+                    sessionUser = data.username;
+                    const emailInput = document.getElementById("verify_username");
+                    if (emailInput) {
+                        emailInput.value = sessionUser;
+                    }
+                } else {
+                    console.warn("User not logged in.");
+                    window.location.href = "/";
+                }
+            });
+    }
     function showLoader() {
         let loader = document.createElement("div");
         loader.classList.add("loader");
@@ -12,13 +30,11 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.appendChild(loader);
     }
 
-    // Utility function to remove the loader
     function removeLoader() {
         let loader = document.querySelector(".loader");
         if (loader) loader.remove();
     }
 
-    // Utility function to show alert messages
     function showAlert(message, type = "info") {
         let alertBox = document.createElement("div");
         alertBox.classList.add("alert", type);
@@ -32,12 +48,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function startOTPTimer(durationInSeconds = 120) {
         otpExpiryTime = Date.now() + durationInSeconds * 1000;
-    
+
         document.getElementById("otp-timer").style.display = "block";
-    
+
         countdownInterval = setInterval(() => {
             const remaining = Math.floor((otpExpiryTime - Date.now()) / 1000);
-    
+
             if (remaining <= 0) {
                 clearInterval(countdownInterval);
                 document.getElementById("otp-countdown").innerText = "Expired";
@@ -49,8 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }, 1000);
     }
-    
-    // Generic fetch function to handle API calls
+
     async function apiRequest(url, method, body = {}) {
         showLoader();
         try {
@@ -69,7 +84,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Login Function
     window.login = async function () {
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value.trim();
@@ -92,11 +106,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function isValidEmail(email) {
-        // Basic email format check
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    // Register Function
     window.register = async function () {
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value.trim();
@@ -115,22 +127,20 @@ document.addEventListener("DOMContentLoaded", function () {
         showAlert(data?.message || "Registration failed!", data?.success ? "success" : "error");
     };
 
-    // Add Service Function
-    function runAddService(username, password, otp) {
+    function runAddService(password, otp) {
         const serviceName = document.getElementById("service_name").value.trim();
         const serviceIp = document.getElementById("service_ip").value.trim();
         const servicePort = document.getElementById("service_port").value.trim();
-    
+
         if (!serviceName || !serviceIp || !servicePort) {
             showAlert("All fields are required!", "error");
             return;
         }
-    
+
         apiRequest("/add_service", "POST", {
             service_name: serviceName,
             service_ip: serviceIp,
             service_port: servicePort,
-            username,
             password,
             otp
         }).then(data => {
@@ -138,18 +148,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Remove Service Function
-    function runRemoveService(username, password, otp) {
+    function runRemoveService(password, otp) {
         const serviceName = document.getElementById("remove_service_name").value.trim();
-    
+
         if (!serviceName) {
             showAlert("Service name is required!", "error");
             return;
         }
-    
+
         apiRequest("/remove_service", "POST", {
             service_name: serviceName,
-            username,
             password,
             otp
         }).then(data => {
@@ -157,75 +165,77 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Logout function
     window.logout = function () {
         sessionStorage.clear();
         window.location.href = "/logout";
     };
 
-    //pop-up double credential verification
-    window.showVerificationModal = function(actionType) {
+    window.showVerificationModal = function (actionType) {
         pendingAction = actionType;
-        otpSent = false;  
+        otpSent = false;
         document.getElementById("verify_otp").style.display = "none";
-        document.getElementById("verify_otp").value = "";  // ✅ Clear OTP input
+        document.getElementById("verify_otp").value = "";
         document.getElementById("verifyBtn").innerText = "Confirm";
         document.getElementById("authModal").style.display = "flex";
+
+        // Refill email field from session
+        const emailInput = document.getElementById("verify_username");
+        if (emailInput && sessionUser) {
+            emailInput.value = sessionUser;
+        }
     };
-    window.closeModal = function() {
+
+    window.closeModal = function () {
         document.getElementById("authModal").style.display = "none";
-        document.getElementById("verify_username").value = "";
         document.getElementById("verify_password").value = "";
         document.getElementById("verify_otp").value = "";
-        document.getElementById("verify_otp").style.display = "none";         // ✅ hide OTP field
-        document.getElementById("resendBtn").style.display = "none";         
+        document.getElementById("verify_otp").style.display = "none";
+        document.getElementById("resendBtn").style.display = "none";
         document.getElementById("verifyBtn").innerText = "Confirm";
-
         clearInterval(countdownInterval);
         document.getElementById("otp-timer").style.display = "none";
         document.getElementById("otp-countdown").innerText = "02:00";
-
     };
 
     window.resendOTP = async function () {
-        const username = document.getElementById("verify_username").value.trim();
         const password = document.getElementById("verify_password").value.trim();
-    
-        if (!username || !password) {
-            showAlert("Enter email and password before resending OTP.", "error");
+
+        if (!sessionUser || !password) {
+            showAlert("Email and password required to resend OTP", "error");
             return;
         }
-    
-        const result = await apiRequest("/request_otp", "POST", { username, password });
-    
+
+        const result = await apiRequest("/request_otp", "POST", {
+            username: sessionUser,
+            password
+        });
+
         if (result?.success) {
             showAlert("New OTP sent!", "success");
         } else {
             showAlert(result?.message || "Failed to resend OTP", "error");
         }
     };
-    
-    
-    window.confirmVerification = async function() {
-        const username = document.getElementById("verify_username").value.trim();
+
+    window.confirmVerification = async function () {
         const password = document.getElementById("verify_password").value.trim();
         const otpField = document.getElementById("verify_otp");
 
-
         if (!otpSent) {
-            if (!username || !password) {
-                showAlert("Username and password required", "error");
+            if (!sessionUser || !password) {
+                showAlert("Password required", "error");
                 return;
             }
-        
-            const result = await apiRequest("/request_otp", "POST", { username, password });
 
-    
+            const result = await apiRequest("/request_otp", "POST", {
+                username: sessionUser,
+                password
+            });
+
             if (result?.success) {
-                showAlert("OTP sent. Check your email or messages.", "success");
+                showAlert("OTP sent. Check your email.", "success");
                 otpSent = true;
                 otpField.style.display = "block";
-                document.getElementById("verify_otp").style.display = "block";
                 document.getElementById("resendBtn").style.display = "inline-block";
                 document.getElementById("verifyBtn").innerText = "Submit OTP";
                 startOTPTimer();
@@ -239,25 +249,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 showAlert("OTP has expired. Please request a new one.", "error");
                 return;
             }
-            
+
             if (!otp) {
-                showAlert("Enter the OTP sent to you", "error");
+                showAlert("Enter the OTP sent to your email", "error");
                 return;
             }
-    
-            // Step 2: Proceed with the actual action
+
             if (pendingAction === "add") {
-                runAddService(username, password, otp);
+                runAddService(password, otp);
             } else if (pendingAction === "remove") {
-                runRemoveService(username, password, otp);
+                runRemoveService(password, otp);
             }
-    
-            // Reset everything
+
             otpSent = false;
             otpField.style.display = "none";
             document.getElementById("verifyBtn").innerText = "Confirm";
             closeModal();
         }
     };
-    
 });
