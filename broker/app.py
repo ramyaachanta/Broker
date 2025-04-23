@@ -16,7 +16,7 @@ CORS(app)
 app.secret_key = "supersecretkey"
 
 
-password = quote_plus("Cse@40668")  # Encode special characters
+password = quote_plus("XXXXXXXX")  # Encode special characters
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://postgres:{password}@localhost:5432/broker_db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -38,8 +38,8 @@ from email.mime.text import MIMEText
 
 def send_otp_email(recipient_email, otp):
     # ✅ This is the broker's Gmail (used to send OTP to providers)
-    sender_email = "bhagyaputturu2000@gmail.com"           # Replace with your broker Gmail
-    app_password = "kgty rnzp fniw kgyc"           # Replace with your Gmail App Password
+    sender_email = "XXXXXXXXXXXXX@gmail.com"           # Replace with your broker Gmail
+    app_password = "XXXX XXXX XXXX XXXX"           # Replace with your Gmail App Password 16 digit
 
     subject = "Your OTP Code - Service Broker"
     body = f"""
